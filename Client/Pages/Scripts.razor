@@ -1,0 +1,102 @@
+﻿@page "/scripts"
+
+
+@inject IRepositorio repositorio
+@inject NavigationManager navigationManager
+
+
+<h3>Scripts</h3>
+
+
+<SfGrid DataSource="@listScripts">
+    <GridColumns>
+        <GridColumn Field=@nameof(Script.Titulo) HeaderText="Title"></GridColumn>
+        <GridColumn Field=@nameof(Script.Descripcion) HeaderText="Description"></GridColumn>
+        <GridColumn Field=@nameof(Script.Fecha) HeaderText="Date"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+
+
+
+
+<div class="mb-3 mt-3">
+    <a href="/usuarios/nuevo" class="btn btn-primary">New script</a>
+</div>
+
+
+@if (listScripts != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var script in listScripts)
+            {
+                <tr>
+                    <td>@script.Id</td>
+                    <td>@script.Titulo</td>
+                    <td>@script.Descripcion</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Editar(script)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Borrar(script)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+
+@code {
+    private List<Script>? listScripts { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuestaHTTP = await repositorio.Get<List<Script>>("api/Scripts");
+
+        try
+        {
+            listScripts = respuestaHTTP.Response;
+        }
+        catch
+        {
+            //Escribir en consola el error
+            Console.WriteLine(respuestaHTTP.Error.ToString());
+        }
+
+    }
+
+
+    private void Editar(Script script)
+    {
+        navigationManager.NavigateTo($"/scripts/{script.Id}");
+    }
+
+    private async Task Borrar(Script script)
+    {
+        var httpResponse = await repositorio.Delete($"api/Scripts/{script.Id}");
+
+        if (httpResponse.Error)
+        {
+            Console.WriteLine(httpResponse.Error);
+        }
+        else
+        {
+            listScripts.Remove(script);
+        }
+
+    }
+
+}

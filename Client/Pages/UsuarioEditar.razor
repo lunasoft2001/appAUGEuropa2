@@ -1,0 +1,59 @@
+﻿@page "/usuarios/{idUsuario:int}"
+
+@inject IRepositorio repositorio
+@inject NavigationManager navigationManager
+
+<h3>Nuevo usuario de Usuarios</h3>
+
+<EditForm Model="@usuario" OnValidSubmit="@EditarUsuario">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <InputText id="nombre" class="form-control" @bind-Value="usuario.Nombre" />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="usuario.Email" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Editar</button>
+
+    </EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int idUsuario { get; set; }
+
+    private Usuario usuario { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuario = new Usuario();
+
+        var respuestaHTTP = await repositorio.Get<Usuario>($"api/Usuarios/{idUsuario}");
+
+        try
+        {
+            usuario = respuestaHTTP.Response;
+        }
+        catch
+        {
+            //Escribir en consola el error
+            Console.WriteLine(respuestaHTTP.Error.ToString());
+        }
+
+    }
+
+    private async Task EditarUsuario()
+    {
+        var respuestaHTTP = await repositorio.Put<Usuario>($"api/Usuarios/{idUsuario}", usuario);
+
+        navigationManager.NavigateTo("/usuarios");
+    }
+
+}

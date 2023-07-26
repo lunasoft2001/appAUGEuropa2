@@ -1,0 +1,87 @@
+﻿@page "/usuarios"
+
+
+@inject IRepositorio repositorio
+@inject NavigationManager navigationManager
+
+<h3>Listado de Usuarios</h3>
+
+<div class="mb-3 mt-3">
+    <a href="/usuarios/nuevo" class="btn btn-primary">Nuevo</a>
+</div>
+
+
+@if (listaUsuarios != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in listaUsuarios)
+            {
+                <tr>
+                    <td>@usuario.Id</td>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Email</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Editar(usuario)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => Borrar(usuario)">Borrar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>Cargando...</em></p>
+}
+
+
+@code {
+    private List<Usuario>? listaUsuarios { get; set; } 
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuestaHTTP = await repositorio.Get<List<Usuario>>("api/Usuarios");
+
+        try
+        {
+            listaUsuarios = respuestaHTTP.Response;
+        }
+        catch
+        {
+            //Escribir en consola el error
+            Console.WriteLine(respuestaHTTP.Error.ToString());
+        }
+
+    }
+
+
+    private void Editar(Usuario usuario)
+    {
+        navigationManager.NavigateTo($"/usuarios/{usuario.Id}");
+    }
+
+    private async Task Borrar(Usuario usuario)
+    {
+        var httpResponse = await repositorio.Delete($"api/Usuarios/{usuario.Id}");
+
+        if (httpResponse.Error)
+        {
+            Console.WriteLine(httpResponse.Error);
+        }
+        else
+        {
+            listaUsuarios.Remove(usuario);
+        }
+
+    }
+
+}
