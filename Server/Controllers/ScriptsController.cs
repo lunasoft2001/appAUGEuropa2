@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using appAUGEuropa2.Server;
 using appAUGEuropa2.Shared;
+using appAUGEuropa2.Shared.DTO;
 
 namespace appAUGEuropa2.Server.Controllers
 {
@@ -23,16 +24,25 @@ namespace appAUGEuropa2.Server.Controllers
 
         // GET: api/Scripts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Script>>> GetScripts()
+        public async Task<ActionResult<IEnumerable<ScriptDTO>>> GetScripts()
         {
           if (_context.Scripts == null)
           {
               return NotFound();
           }
-            return await _context.Scripts
-                .Include(x => x.Usuario)
-                .Include(x => x.ScriptDetalles)
-                .ToListAsync();
+
+            var scriptsList = from b in _context.Scripts
+                             select new ScriptDTO()
+                             {
+                                 Id = b.Id,
+                                 Titulo = b.Titulo,
+                                 Descripcion = b.Descripcion,
+                                 Fecha = b.Fecha,
+                                 UsuarioId = b.UsuarioId,
+                                 nombreUsuario = b.Usuario.Nombre
+                             };
+
+            return await scriptsList.ToListAsync();
         }
 
         // GET: api/Scripts/5

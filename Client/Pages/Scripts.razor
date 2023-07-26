@@ -8,20 +8,14 @@
 <h3>Scripts</h3>
 
 
-<SfGrid DataSource="@listScripts">
-    <GridColumns>
-        <GridColumn Field=@nameof(Script.Titulo) HeaderText="Title"></GridColumn>
-        <GridColumn Field=@nameof(Script.Descripcion) HeaderText="Description"></GridColumn>
-        <GridColumn Field=@nameof(Script.Fecha) HeaderText="Date"></GridColumn>
-    </GridColumns>
-</SfGrid>
+<SfGrid DataSource="@listScripts"></SfGrid>
 
 
 
 
 
 
-<div class="mb-3 mt-3">
+@*<div class="mb-3 mt-3">
     <a href="/usuarios/nuevo" class="btn btn-primary">New script</a>
 </div>
 
@@ -55,16 +49,26 @@
 else
 {
     <p><em>Loading...</em></p>
-}
+}*@
 
 
 @code {
-    private List<Script>? listScripts { get; set; }
+    private List<ScriptDTO>? listScripts { get; set; }
+    private List<Usuario>? listUsers { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        var respuestaHTTP = await repositorio.Get<List<Script>>("api/Scripts");
+
+        await cargaUsuarios();
+
+        await cargaScripts();
+
+    }
+
+    private async Task cargaScripts()
+    {
+        var respuestaHTTP = await repositorio.Get<List<ScriptDTO>>("api/Scripts");
 
         try
         {
@@ -75,16 +79,29 @@ else
             //Escribir en consola el error
             Console.WriteLine(respuestaHTTP.Error.ToString());
         }
-
     }
 
+
+    private async Task cargaUsuarios()
+    {
+        var respuestaHTTP = await repositorio.Get<List<Usuario>>("api/Usuarios");
+        try
+        {
+            listUsers = respuestaHTTP.Response;
+        }
+        catch
+        {
+            //Escribir en consola el error
+            Console.WriteLine(respuestaHTTP.Error.ToString());
+        }
+    }
 
     private void Editar(Script script)
     {
         navigationManager.NavigateTo($"/scripts/{script.Id}");
     }
 
-    private async Task Borrar(Script script)
+    private async Task Borrar(ScriptDTO script)
     {
         var httpResponse = await repositorio.Delete($"api/Scripts/{script.Id}");
 
@@ -94,6 +111,7 @@ else
         }
         else
         {
+
             listScripts.Remove(script);
         }
 

@@ -1,0 +1,58 @@
+﻿@page "/scriptCard"
+
+
+@inject IRepositorio repositorio
+@inject NavigationManager navigationManager
+
+
+<h3>Script Card</h3>
+
+
+<SfCard>
+    <CardHeader Title="Titulo" />
+
+</SfCard>
+
+
+@code {
+    private List<Script>? listScripts { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuestaHTTP = await repositorio.Get<List<Script>>("api/Scripts");
+
+        try
+        {
+            listScripts = respuestaHTTP.Response;
+        }
+        catch
+        {
+            //Escribir en consola el error
+            Console.WriteLine(respuestaHTTP.Error.ToString());
+        }
+
+    }
+
+
+    private void Editar(Script script)
+    {
+        navigationManager.NavigateTo($"/scripts/{script.Id}");
+    }
+
+    private async Task Borrar(Script script)
+    {
+        var httpResponse = await repositorio.Delete($"api/Scripts/{script.Id}");
+
+        if (httpResponse.Error)
+        {
+            Console.WriteLine(httpResponse.Error);
+        }
+        else
+        {
+            listScripts.Remove(script);
+        }
+
+    }
+
+}
