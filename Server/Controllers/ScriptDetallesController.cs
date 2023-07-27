@@ -49,6 +49,26 @@ namespace appAUGEuropa2.Server.Controllers
 
             return scriptDetalle;
         }
+        // GET: api/ScriptDetalles/Script/5
+        [HttpGet("Script/{idScript:int}")]
+        public async Task<ActionResult<IEnumerable<ScriptDetalle>>> GetScriptDetalles(int idScript)
+        {
+            if (_context.ScriptDetalles == null)
+            {
+                return NotFound();
+            }
+            var scriptDetalle = await _context.ScriptDetalles
+                                            .Where(x => x.ScriptId == idScript)
+                                            .ToListAsync();
+                                            
+
+            if (scriptDetalle == null)
+            {
+                return NotFound();
+            }
+
+            return scriptDetalle;
+        }
 
         // PUT: api/ScriptDetalles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

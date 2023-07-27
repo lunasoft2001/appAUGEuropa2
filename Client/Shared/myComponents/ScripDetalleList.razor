@@ -1,0 +1,80 @@
+﻿@inject IRepositorio repositorio
+@inject NavigationManager navigationManager
+
+
+<h3>Scripts</h3>
+
+
+<SfGrid DataSource="@listScripts">
+    <GridTemplates>
+        <DetailTemplate>
+            @{
+                var myScript = (context as ScriptDetalle);
+                <div>
+                    <VerScriptDetalle id="myScript.Id"></VerScriptDetalle>
+                </div>
+            }
+        </DetailTemplate>
+    </GridTemplates>
+    <GridColumns>
+        <GridColumn Field=@nameof(ScriptDetalle.Titulo) HeaderText="Title"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+
+
+@code {
+
+    [Parameter]
+    public int idScript { get; set; }
+
+    private List<ScriptDetalle>? listScripts { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await cargaScripts();
+
+    }
+
+    private async Task cargaScripts()
+    {
+        var respuestaHTTP = await repositorio.Get<List<ScriptDetalle>>($"api/ScriptDetalles/Script/{idScript}");
+
+        try
+        {
+            listScripts = respuestaHTTP.Response;
+        }
+        catch
+        {
+            //Escribir en consola el error
+            Console.WriteLine(respuestaHTTP.Error.ToString());
+        }
+    }
+
+
+    private void Editar(ScriptDetalle script)
+    {
+        navigationManager.NavigateTo($"/scripts/{script.Id}");
+    }
+
+    private async Task Borrar(ScriptDetalle script)
+    {
+        var httpResponse = await repositorio.Delete($"api/Scripts/{script.Id}");
+
+        if (httpResponse.Error)
+        {
+            Console.WriteLine(httpResponse.Error);
+        }
+        else
+        {
+
+            listScripts.Remove(script);
+        }
+
+    }
+
+}

@@ -1,6 +1,4 @@
-﻿@page "/scriptDetalle/{id:int}"
-
-@inject IRepositorio repositorio
+﻿@inject IRepositorio repositorio
 
 
 <EditForm Model="@scriptDetalle" OnValidSubmit="@EditarScript">
@@ -13,7 +11,7 @@
     </div>
     <div class="form-group">
         <label for="code">Code</label>
-        <SfTextBox ID="code" he Multiline=true rows="5" @bind-Value="scriptDetalle.Codigo"></SfTextBox>
+        <SfTextBox ID="code" he Multiline=true rows="10" @bind-Value="scriptDetalle.Codigo"></SfTextBox>
     </div>
 
     <div class="mt-3">

@@ -5,14 +5,32 @@
 @inject NavigationManager navigationManager
 
 
-<h3>Scripts</h3>
+<SfMessage Severity="MessageSeverity.Success">The Script was updated.</SfMessage>
 
 
-<SfGrid DataSource="@listScripts"></SfGrid>
+<SfGrid DataSource="@listScripts">
+    <GridTemplates>
+        <DetailTemplate>
+            @{
+                var myScript = (context as ScriptDTO);
+                <div>
+                    <ScripDetalleList idScript="myScript.Id"></ScripDetalleList>
+                </div>
+            }
+        </DetailTemplate>
+    </GridTemplates>
+    <GridColumns>
+        <GridColumn Field=@nameof(ScriptDTO.Titulo) HeaderText="Title"></GridColumn>
+    </GridColumns>
+</SfGrid>
 
 
 
-
+<style>
+    .e-message {
+        width: 300px;
+    }
+</style>
 
 
 @*<div class="mb-3 mt-3">
