@@ -12,5 +12,5 @@ public partial class ScriptDetalle
 
     public string Codigo { get; set; } = null!;
 
-    public virtual Script Script { get; set; } = null!;
+    public virtual Script? Script { get; set; }
 }
