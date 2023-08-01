@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject SweetAlertService Swal;
+
 
 <PageTitle>Index</PageTitle>
 
@@ -10,3 +12,8 @@ Welcome to your new app.
 
 <SfButton>Button</SfButton>
 <SfCalendar TValue="DateTime"></SfCalendar>
+
+<button class="btn btn-primary"
+@onclick="@(async () => await Swal.FireAsync("Any fool can use a computer"))">
+    Try me!
+</button>

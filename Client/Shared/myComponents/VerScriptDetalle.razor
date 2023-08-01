@@ -1,5 +1,5 @@
 ﻿@inject IRepositorio repositorio
-
+@inject SweetAlertService Swal
 
 <EditForm Model="@scriptDetalle" OnValidSubmit="@EditarScript">
     <DataAnnotationsValidator />
@@ -19,13 +19,14 @@
     </div>
     
 
-
     </EditForm>
+
 
 
 @code {
     [Parameter]
     public int id { get; set; }
+
 
     private ScriptDetalle? scriptDetalle { get; set; }
 
@@ -38,6 +39,8 @@
         try
         {
             scriptDetalle = respuestaHTTP.Response;
+
+
         }
         catch
         {
@@ -50,6 +53,16 @@
     private async Task EditarScript()
     {
         var respuestaHTTP = await repositorio.Put<ScriptDetalle>($"api/ScriptDetalles/{id}", scriptDetalle);
+        if (respuestaHTTP.Error)
+        {
+            await Swal.FireAsync("Error to update the script");
+        }
+        else
+        {
+            await Swal.FireAsync("Script was updated.");
+        }
+        
 
     }
+
 }

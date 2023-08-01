@@ -1,5 +1,6 @@
 using appAUGEuropa2.Client;
 using appAUGEuropa2.Client.Repositories;
+using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Syncfusion.Blazor;
@@ -25,5 +26,6 @@ void ConfigureServices(IServiceCollection services)
 {
     services.AddScoped<IRepositorio, Repositorio>();
     services.AddSyncfusionBlazor();
+    services.AddSweetAlert2();
 }
 
